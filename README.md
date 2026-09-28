@@ -44,6 +44,41 @@ See [`TEMPLATE.md`](TEMPLATE.md) for a blank copy and [`examples/`](examples/) f
 
 Separating the working spec from the SFS lets the working spec stay messy while the SFS which is committed to git history stays clean. That makes it reliable, low-noise context for future teammates and for AI coding agents.
 
+## Automatic generation with a Claude skill
+
+This repo includes a [skill](skill/) that writes an SFS for you. It reads your code changes, tests, and working spec, fills in the [template](TEMPLATE.md), and checks the result against SFS rules.
+
+### When to use it
+
+- **Implementation is done** and you want the final record of what shipped
+- **The PR is ready for review**, so reviewers get a two-minute summary of the changes
+- **The behavior changed after you wrote the SFS**, so it needs updating. The skill edits the existing SFS in place rather than adding change notes
+
+Don't use it while you're still figuring out the design. That's what the working spec is for.
+
+### How to install
+
+Ask your go-to AI agent on instructions on how to install a skill in your environment.
+
+### How to use it
+
+Once installed, ask in plain language when your implementation is finished:
+
+> Write the SFS for this change.
+
+or, to update one after the code changed:
+
+> Update the SFS for PROJ-123, the behavior changed.
+
+The skill will:
+
+1. Read the diff, tests, working spec, and ticket key
+2. Draft the SFS from the template (or update the existing one)
+3. Run `scripts/check_sfs.py` to check the word count, sections, and rework language
+4. Save it to `docs/sfs/<TICKET-KEY>-<slug>.md` unless your project has its own convention, and tell you anything it was unsure about
+
+It does not commit anything. Review the SFS like any other file in your PR, since you're the one who knows whether it matches reality.
+
 ## Contributing
 
 Ideas, critiques, and real-world examples are welcome. Open an issue or a pull request.
